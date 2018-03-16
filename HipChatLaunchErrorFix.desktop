@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=`QTWEBENGINE_DISABLE_SANDBOX=true /opt/HipChat4/bin/HipChat4`
+Name=HipChatWorkAround
+Comment=I dunno if backticks work from inside desktop files if not run the command from a .sh I know that works 100%
+Icon=/path/to/pretty/picture
