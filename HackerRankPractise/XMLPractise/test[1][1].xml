@@ -1,0 +1,9 @@
+<note>
+    <a>ADI</a>
+    <b name='Bob'>
+        <c name='Jones'></c>
+        <c name='Smith'></c>
+    </b>
+    <heading>Reminder</heading>
+    <body file='test.jpg'></body>
+</note>
