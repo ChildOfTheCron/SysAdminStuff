@@ -1,0 +1,10 @@
+A better way to fix the hipchat blank screen issue is to open the binary file and add the following enviroment variable to the list of evn variables at the bottom:
+
+For example my install is at: /opt/HipChat4/bin/HipChat4 and contains the following env variables.
+
+export QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb
+export QTWEBENGINEPROCESS_PATH=$hipchatRoot/bin/QtWebEngineProcess
+export QTWEBENGINE_REMOTE_DEBUGGING=12345
+export QTWEBENGINE_DISABLE_SANDBOX=true
+
+This means the user can just run hipchat as usual without the need to pass args into the launch conditions externally.
