@@ -4,5 +4,5 @@ Type=Application
 Terminal=false
 Exec=`QTWEBENGINE_DISABLE_SANDBOX=true /opt/HipChat4/bin/HipChat4`
 Name=HipChatWorkAround
-Comment=I dunno if backticks work from inside desktop files if not run the command from a .sh I know that works 100%
+Comment=I dunno if backticks work from inside desktop files if not run the command from a .sh I know that works 100% An even better way to fix this is to turn off sandboxing by passing an enviroment variable into the hipchat binary file (open the .sh and scroll to the bottom).
 Icon=/path/to/pretty/picture
