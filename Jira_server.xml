@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   ====================================================================================
+
+   Atlassian JIRA Standalone Edition Tomcat Configuration.
+
+
+   See the following for more information
+
+   http://confluence.atlassian.com/display/JIRA/Configuring+JIRA+Standalone
+
+   ====================================================================================
+ -->
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<Server port="3737" shutdown="SHUTDOWN">
+
+
+	[...]
+
+	<!--  ====================================================================================
+
+		Add sexy Jira config stuff above
+		
+	==================================================================================== -->
+            
+	<Value className="org.apache.catalina.valves.RemoteIpValve"
+		remoteIpHeader="x-forwarded-for"
+		remoteIpProxiesHeader="x-forwarded-by"
+		protocolHeader="x-forwarded-proto"
+	/>
+
+	<Valve className="org.apache.catalina.valves.AccessLogValve" resolveHosts="false"
+		requestAttributesEnabled="true"
+		pattern="%a %{jira.request.id}r %{jira.request.username}r %t &quot;%m %U%q %H&quot; %s %b %D &quot;%{Referer}i&quot; &quot;%{User-Agent}i&quot; &quot;%{jira.request.assession.id}r&quot;"/>
+
+	<!-- This is the neat part. Without exposing the docker container to make it externally accessable we can just check the header status to see
+	if our information is being sent correctly from the load balancer container, the IP inside the log will appear as the host's docker IP addr.
+	Meaning that we are connecting via our user defined network bridge, which means we are going through our load balancer container inside that little network.
+	If we connect directly to Jira from our local host, the log should appear empty as we are not forwarding anything in the HTTP header. This is a way to make sure
+	that our load balancer container is forwarding stuff correctly to the external (Jira/Tomcat) server. (Use X-Forwarded-For as just Forwarded won't work with Jira)
+		LocalHost -> docker conainter running HAProxy/Nginx Loadbalancer -> External Jira server
+	-->
+	<Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" prefix="custom-log" suffix=".log" pattern="%t %{X-Forwarded-For}i"/>
+
+        </Engine>
+    </Service>
+</Server>
