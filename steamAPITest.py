@@ -24,14 +24,21 @@ secondVal = subDict['apps']
 # Not sure what the best solution is, also dont wanna spam steam with 80K get requests whenever I run this...
 s = requests.Session()
 
+hackyCount = 0
+
 # For each AppID that's been returned we wanna parse the json and grab the discount code
 # This is a list in a list in a list in a list in a list .... you get the point, terrible code that needs to be cleant up
 for val in secondVal:
     
+    if hackyCount > 40:
+        break;
+    else:
+        hackyCount = hackyCount + 1
+
     jsonAppID = val['appid']        
     appreq    = s.get('https://store.steampowered.com/api/appdetails/?appids=' + str(val['appid']) + '&cc=EE&l=english&v=1')
     appfirstVal = appreq.json()   
-    tmpdisc = '-0%'
+    tmpdisc = '0%'
 
     try:
         appsubDict = appfirstVal[str(val['appid'])]
@@ -46,7 +53,9 @@ for val in secondVal:
         #break <-- Debug stuff, uncomment this to jump out when you hit the first discount
     except:
         print("Unknown json found, will set to 0%")
-            
+
+    if (tmpdisc == ""):
+        tmpdisc = "0%"
 
     sqlContent.append([val['appid'], val['name'], tmpdisc])    
 
