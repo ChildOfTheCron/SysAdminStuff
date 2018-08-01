@@ -43,9 +43,9 @@ using namespace DJI::OSDK::Telemetry;
 #include <vector>
 #include <sstream>
 #include <iterator>
-#include <stdio.h>
-#include <stdlib.h>
-#include <cstring>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <cstring>
 using namespace std;
 
 // Set up some global variables and set them to defaults
@@ -74,13 +74,13 @@ void doCommand(Vehicle* vehicle)
 		istringstream iss(commandString);
 		vector<string> coords((istream_iterator<string>(iss)), istream_iterator<string>());
 		
-		moveByPositionOffset(vehicle, strtof((coords[1]).c_str(),0), strtof((coords[2]).c_str(),0),strtof((coords[3]).c_str(),0),strtof((coords[4]),c_str(),0));
+		moveByPositionOffset(vehicle, stod(coords[1]), stod(coords[2]), stod(coords[3]),stod(coords[4]));
 		//cout << "COORDS PASSED: " + coords[1] + coords[2] + coords[3] + coords[4];
 
 	}
 	else if (commandString == "exit")
 	{
-		cout << "Exit command recieved.";
+		//cout << "Exit command recieved.";
 		isReading = false;
 	}
 	else
@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 		readFile();
 		doCommand(vehicle);	
 		usleep(timeIn);
-		//cout << "Waited 10 seconds I think...\n";
+		cout << "Staring Next loop read...\n";
 	}
 
   return 0;
