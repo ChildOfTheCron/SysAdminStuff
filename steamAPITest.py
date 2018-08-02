@@ -10,6 +10,7 @@ import time
 
 sqlContentTest = []
 exitFlag = 0
+hackyCount = 0
 
 class myThread (threading.Thread):
    #def __init__(self, threadID, name, val):
@@ -44,7 +45,7 @@ def getAppIdList():
 
 def lookUpDiscount(sndVal):
 
-    hackyCount = 0
+    #hackyCount = 0
     for val in sndVal:
 
         if hackyCount < 60:
@@ -54,9 +55,14 @@ def lookUpDiscount(sndVal):
             thread.start()
             #thread.join()
         else:
+            while hackyCount > 60:
+                time.sleep(60)
+
+            hackyCount = hackyCount + 1
+            thread = myThread(val)
+            thread.start()
             break;
 
-    
 def getDisc(val):
 
     s = requests.Session() # Remove this??
@@ -84,6 +90,7 @@ def getDisc(val):
         tmpdisc = "0%"
 
     sqlContentTest.append([val['appid'], val['name'], tmpdisc])
+    hackyCount = hackyCount - 1
 
 # Grab a list of all steam app id's using the web API, not sure if this is returning them all
 # but I got no control over that
@@ -106,56 +113,6 @@ threadChecker()
 #        thread.join()
 #if (threading.enumerate() <= 1)
 #    print("Probed run end on: ", datetime.datetime.now().strftime("%d/%m/%y::%H-%M-%S"))    
-
-
-# Set up some variables we'll need
-#sqlContent = []
-#firstVal = req4.json()
-#subDict = firstVal['applist']
-#secondVal = subDict['apps']
-
-# The docs say that reusing the same HTTP connection will use the underlying TCP connection
-# resulting in faster performance but my code runs slower when I use a session other just spamming GETs
-# Not sure what the best solution is, also dont wanna spam steam with 80K get requests whenever I run this...
-#s = requests.Session()
-
-#hackyCount = 0
-
-# For each AppID that's been returned we wanna parse the json and grab the discount code
-# This is a list in a list in a list in a list in a list .... you get the point, terrible code that needs to be cleant up
-#for val in secondVal:
-#    
-#    if hackyCount > 40:
-#        break;
-#    else:
-#        hackyCount = hackyCount + 1
-#
-#    jsonAppID = val['appid']        
-#    appreq    = s.get('https://store.steampowered.com/api/appdetails/?appids=' + str(val['appid']) + '&cc=EE&l=english&v=1')
-#    appfirstVal = appreq.json()   
-#    tmpdisc = '0%'
-#
-#    try:
-#        appsubDict = appfirstVal[str(val['appid'])]
-#        appsecondVal = appsubDict['data']
-#        appthirdVal = appsecondVal['package_groups']
-#        appfourthVal = appthirdVal[0]
-#        appfithVal = appfourthVal['subs']
-#        appsixVal = appfithVal[0]
-#        appseventhVal = appsixVal['percent_savings_text']
-#        tmpdisc = appseventhVal
-#        print(appseventhVal)
-#        #break <-- Debug stuff, uncomment this to jump out when you hit the first discount
-#    except:
-#        print("Unknown json found, will set to 0%")
-#
-#    if (tmpdisc == ""):
-#        tmpdisc = "0%"
-#
-#    sqlContent.append([val['appid'], val['name'], tmpdisc])    
-#
-#Print end run timestamp and create .sql file for use by my PGDB
-#print("Probed run end on: ", datetime.datetime.now().strftime("%d/%m/%y::%H-%M-%S"))
 
 file = open("appidlist.sql", "w")
 file.write("INSERT INTO appIdTable ( appId, productName, discount ) VALUES \n")
