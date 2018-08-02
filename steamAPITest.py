@@ -9,7 +9,6 @@ import threading
 import time
 
 sqlContentTest = []
-
 exitFlag = 0
 
 class myThread (threading.Thread):
@@ -26,7 +25,9 @@ class myThread (threading.Thread):
 
 def threadChecker():
 
-    if (threading.active_count() == 0):
+    time.sleep(5)
+    #print("Checking threads \n")
+    if (threading.active_count() == 1):
         print("Probed run end on: ", datetime.datetime.now().strftime("%d/%m/%y::%H-%M-%S"))
     else:
         threadChecker()
@@ -46,7 +47,7 @@ def lookUpDiscount(sndVal):
     hackyCount = 0
     for val in sndVal:
 
-        if hackyCount < 10:
+        if hackyCount < 60:
             hackyCount = hackyCount + 1
             #thread = myThread(hackyCount, "thread-"+str(hackyCount),val)
             thread = myThread(val)
@@ -94,7 +95,8 @@ print("Probed run start on: ", datetime.datetime.now().strftime("%d/%m/%y::%H-%M
 appList = getAppIdList()
 lookUpDiscount(appList)
 
-time.sleep(15)
+#time.sleep(1)
+#print(threading.activeCount())
 threadChecker()
 
 #time.sleep(10)
