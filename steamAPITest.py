@@ -8,9 +8,9 @@ import datetime
 import threading
 import time
 
-sqlContentTest = []
-exitFlag = 0
-hackyCount = 0
+#sqlContentTest = []
+#exitFlag = 0
+#hackyCount = 0
 
 class myThread (threading.Thread):
    #def __init__(self, threadID, name, val):
@@ -45,23 +45,9 @@ def getAppIdList():
 
 def lookUpDiscount(sndVal):
 
-    #hackyCount = 0
-    for val in sndVal:
-
-        if hackyCount < 60:
-            hackyCount = hackyCount + 1
-            #thread = myThread(hackyCount, "thread-"+str(hackyCount),val)
-            thread = myThread(val)
-            thread.start()
-            #thread.join()
-        else:
-            while hackyCount > 60:
-                time.sleep(60)
-
-            hackyCount = hackyCount + 1
-            thread = myThread(val)
-            thread.start()
-            break;
+    thread = myThread(sndVal)
+    thread.start()
+    #thread.join()
 
 def getDisc(val):
 
@@ -69,7 +55,9 @@ def getDisc(val):
 
     jsonAppID = val['appid']
     appreq    = s.get('https://store.steampowered.com/api/appdetails/?appids=' + str(val['appid']) + '&cc=EE&l=english&v=1')
+    print(appreq.status_code)
     appfirstVal = appreq.json()
+
     tmpdisc = '0%'
 
     try:
@@ -90,7 +78,6 @@ def getDisc(val):
         tmpdisc = "0%"
 
     sqlContentTest.append([val['appid'], val['name'], tmpdisc])
-    hackyCount = hackyCount - 1
 
 # Grab a list of all steam app id's using the web API, not sure if this is returning them all
 # but I got no control over that
@@ -100,7 +87,21 @@ def getDisc(val):
 print("Probed run start on: ", datetime.datetime.now().strftime("%d/%m/%y::%H-%M-%S"))
 
 appList = getAppIdList()
-lookUpDiscount(appList)
+
+sqlContentTest = []
+exitFlag = 0
+hackyCount = 0
+
+for val in appList:
+    if (hackyCount < 100): 
+        lookUpDiscount(val)
+        hackyCount = hackyCount + 1
+    else:
+        time.sleep(600)
+        print("system up")
+        hackyCount = hackyCount - 100 
+        print(threading.active_count())
+        lookUpDiscount(val)
 
 #time.sleep(1)
 #print(threading.activeCount())
