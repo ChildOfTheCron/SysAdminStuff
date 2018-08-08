@@ -19,12 +19,36 @@ sub scrapeDataToFile
 	my $url = 'https://store.steampowered.com/search/?os=win%2Cmac%2Clinux&specials=1&page='.$pageNum;
 	my $html = get $url;
 
-	my @appIDData = $html =~ m/<a href="https:\/\/store\.steampowered\.com\/app\/.*"  data-ds-appid="(.*)" onmouseover=/g;
+	#my @appIDData = $html =~ m/<a href="https:\/\/store\.steampowered\.com\/app\/.*"  data-ds-appid="(.*)" onmouseover=/g;
+	my @appIDData = $html =~ m/<a href="https:\/\/store\.steampowered\.com\/[A-z]{3}\/.*"  data-ds-.*="(\d+)"/g;
 	my @productNameData = $html =~ m/<div class="col search_name ellipsis">.*\n.*<span class="title">(.*)<\/span>/g;
+
+	foreach my $name (@productNameData)
+	{
+		if ($name =~ /'/)
+		{
+			print "$name has a comma thing escaping it...\n.";
+			$name =~ s/'//;
+		}
+	}
+
 	my @discountData = $html =~ m/<div class="col search_discount responsive_secondrow">.*\n.*<span>(.*)<\/span>/g;
+
+	# Basic error catching, if something goes wrong with the html parsing.
+	my $appsize = scalar @appIDData;
+	my $prodsize = scalar @productNameData;
+	my $discsize = scalar @discountData;
+	if ($appsize != $prodsize)
+	{
+		print "AppArraySize: $appsize : ProductArraySize: $prodsize : DiscountArraySize $discsize \n";
+		die "Warning, arrays do not align for items on page $pageNum, aborting..."
+	}
 
 	foreach my $val (0..(@appIDData-1))
 	{
+
+		#print "Appid: $appIDData[$val] ProductName: $productNameData[$val] Discount: $discountData[$val]\n";
+
 		my $filename = 'appidlist.sql';
 		open(my $fh, '>>:encoding(UTF-8)', $filename) or die "Could not open file '$filename' $!";
 			print $fh "($appIDData[$val], \'$productNameData[$val]\',\'$discountData[$val]\'), \n";
@@ -38,7 +62,7 @@ createSQLFile() unless -e "appidlist.sql";
 
 print "Done making SQL file if it didn't exist \n";
 
-my $totalRuns = 10;
+my $totalRuns = 2;
 $| = 1;
 for (my $i=1; $i <= $totalRuns; $i++) {
 	print "Starting run ...\n";
