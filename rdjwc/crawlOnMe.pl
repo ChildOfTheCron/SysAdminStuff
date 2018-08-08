@@ -17,7 +17,7 @@ sub scrapeDataToFile
 	my ($pageNum) = @_;
 
 	my $url = 'https://store.steampowered.com/search/?os=win%2Cmac%2Clinux&specials=1&page='.$pageNum;
-	my $html = get $url;
+	my $html = get $url or die "Unable to get HTML data, aborting incase Vavle is angry with us.";
 
 	#my @appIDData = $html =~ m/<a href="https:\/\/store\.steampowered\.com\/app\/.*"  data-ds-appid="(.*)" onmouseover=/g;
 	my @appIDData = $html =~ m/<a href="https:\/\/store\.steampowered\.com\/[A-z]{3}\/.*"  data-ds-.*="(\d+)"/g;
@@ -32,7 +32,8 @@ sub scrapeDataToFile
 		}
 	}
 
-	my @discountData = $html =~ m/<div class="col search_discount responsive_secondrow">.*\n.*<span>(.*)<\/span>/g;
+	#my @discountData = $html =~ m/<div class="col search_discount responsive_secondrow">.*\n.*<span>(.*)<\/span>/g;
+	my @discountData = $html =~ m/<div class="col search_discount responsive_secondrow">.*\n.*<span>-(.*)%<\/span>/g;
 
 	# Basic error catching, if something goes wrong with the html parsing.
 	my $appsize = scalar @appIDData;
