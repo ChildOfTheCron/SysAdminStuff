@@ -15,8 +15,9 @@ CREATE TABLE appIdTable (
 );
 CREATE GROUP restgroup;
 CREATE USER restbot WITH PASSWORD 'resty';
-ALTER ROLE restgroup LOGIN;
 ALTER GROUP restgroup ADD USER restbot;
+ALTER ROLE restgroup LOGIN;
+GRANT SELECT ON TABLE appIdTable TO restgroup;
 EOSQL
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" postgres < /appidlist.sql 
