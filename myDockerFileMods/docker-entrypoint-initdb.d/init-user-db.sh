@@ -13,6 +13,10 @@ CREATE TABLE appIdTable (
 	productname 	varchar(250),
 	discount	varchar(250)
 );
+CREATE GROUP restgroup;
+CREATE USER restbot WITH PASSWORD 'resty';
+ALTER ROLE restgroup LOGIN;
+ALTER GROUP restgroup ADD USER restbot;
 EOSQL
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" postgres < /appidlist.sql 
