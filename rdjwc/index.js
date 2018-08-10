@@ -14,10 +14,69 @@ const express = require('express')
 const app = express()
 
 var pgp = require('pg-promise')(/*options wut?*/)
-var db = pgp('postgres://nodetest:nodetest@localhost:5432/puppies')
+//var db = pgp('postgres://nodetest:nodetest@localhost:5432/puppies')
+var db = pgp('postgres://restbot:resty@172.17.0.2:5432/postgres')
 
-app.get('/api/getPuppers', function (req, res, next) {
+/*app.get('/api/getPuppers', function (req, res, next) {
   db.any('select * from pups')
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL puppies'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+})*/
+
+app.get('/api/getAllSales', function (req, res, next) {
+  db.any('SELECT * FROM appidtable')
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL puppies'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+})
+app.get('/api/get50OffSales', function (req, res, next) {
+  db.any('SELECT * FROM appidtable WHERE discount >= 50')
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL puppies'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+})
+app.get('/api/get90OffSales', function (req, res, next) {
+  db.any('SELECT * FROM appidtable WHERE discount >= 90')
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL puppies'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+})
+app.get('/api/game/*', function (req, res, next) {
+  var id = req.params;
+  db.any('SELECT * FROM appidtable WHERE appid = '+ id[0])
     .then(function (data) {
       res.status(200)
         .json({
@@ -31,8 +90,6 @@ app.get('/api/getPuppers', function (req, res, next) {
     });
 })
 
-
-//app.get('/', (req, res) => res.send('Hello World, first app using Express! Woo!'))
 
 //GET
 app.get('/', function (req, res) {
@@ -64,4 +121,3 @@ app.delete('/user', function (req, res) {
 
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'))
-
