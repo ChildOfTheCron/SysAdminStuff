@@ -48,4 +48,4 @@ INSERT INTO appIdTable ( appId, productName, discount ) VALUES
 (62587, 'Wolfenstein: The Two Pack','50'), 
 (201810, 'Wolfenstein: The New Order','50'), 
 (359930, 'The Evil Within: The Executioner','40'), 
-(268050, 'The Evil Within','75'), 
+(268050, 'The Evil Within','75') 
