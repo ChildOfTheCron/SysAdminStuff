@@ -4,6 +4,40 @@ use LWP::Simple qw(get);
 use utf8;
 binmode STDOUT, ':utf8';
 
+sub uniq {
+	my %seen;
+	grep !$seen{$_}++, @_;
+}
+ 
+sub cleanData
+{
+	my $filename = 'appidlist.sql';
+ 
+	open(my $fh, '<:encoding(UTF-8)', $filename) or die "Could not open file '$filename' $!";
+		chomp(my @lines = <$fh>);
+	close $fh;
+ 
+	my @cleanData = uniq(@lines);
+ 
+	print "Length check \n";
+	print scalar(@lines);
+	print "\n";
+	print scalar( @cleanData);
+	print "End length check \n";
+ 
+	foreach my $val (@cleanData)
+	{
+		print "Entry: $val \n";
+	}
+
+	open(my $fh2, '>:encoding(UTF-8)', "tmpTest.sql") or die "cant open file to write clean data too. \n";
+		foreach my $arrayEntry (@cleanData)
+		{
+			print $fh2 $arrayEntry;
+		}
+	close($fh2);
+}
+
 sub createSQLFile
 {
 	my $filename = 'appidlist.sql';
@@ -63,12 +97,13 @@ createSQLFile() unless -e "appidlist.sql";
 
 print "Done making SQL file if it didn't exist \n";
 
-my $totalRuns = 2;
+my $totalRuns = 10;
 $| = 1;
 for (my $i=1; $i <= $totalRuns; $i++) {
 	print "Starting run ...\n";
 	scrapeDataToFile($i);
-	sleep(10);
+	sleep(30);
 	print "Finishing run ...\n";
 }
 
+cleanData();
