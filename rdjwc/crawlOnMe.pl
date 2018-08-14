@@ -5,13 +5,32 @@ use utf8;
 binmode STDOUT, ':utf8';
 
 sub uniq {
-	my %seen;
-	grep !$seen{$_}++, @_;
+         #This works well, but we need more fine grained control
+         #my %seen;
+         #grep !$seen{$_}++, @_;
+ 
+         my (@storeArray) = @_;
+  
+         foreach (my $i = 0; $i <= scalar(@storeArray); $i++)
+         {
+                 foreach (my $j = $i+1; $j < scalar(@storeArray); $j++)
+                 {
+                         my $idI = $1 if ($storeArray[$i] =~ m/^\((\d+)/);
+                         my $idJ = $1 if ($storeArray[$j] =~ m/^\((\d+)/);
+  
+                         if ( $idI && $idJ && $idI eq $idJ )
+                         {
+				$storeArray[$j] = "";
+                         }
+                 }
+        }
+
+         return @storeArray;
 }
  
 sub cleanData
 {
-	my $filename = 'appidlist.sql';
+	my $filename = 'rawdata.sql';
  
 	open(my $fh, '<:encoding(UTF-8)', $filename) or die "Could not open file '$filename' $!";
 		chomp(my @lines = <$fh>);
@@ -19,28 +38,22 @@ sub cleanData
  
 	my @cleanData = uniq(@lines);
  
-	print "Length check \n";
-	print scalar(@lines);
-	print "\n";
-	print scalar( @cleanData);
-	print "End length check \n";
- 
-	foreach my $val (@cleanData)
-	{
-		print "Entry: $val \n";
-	}
+	# Remove trailing comma from array.
+	print "Last element was: " . $cleanData[-1] . "\n";
+	$cleanData[-1] =~ s/(\)),/$1/;
+	print "Last element is now: " . $cleanData[-1] . "\n";
 
-	open(my $fh2, '>:encoding(UTF-8)', "tmpTest.sql") or die "cant open file to write clean data too. \n";
+	open(my $fh2, '>:encoding(UTF-8)', "appidlist.sql") or die "cant open file to write clean data too. \n";
 		foreach my $arrayEntry (@cleanData)
 		{
-			print $fh2 $arrayEntry;
+			print $fh2 "$arrayEntry\n";
 		}
 	close($fh2);
 }
 
 sub createSQLFile
 {
-	my $filename = 'appidlist.sql';
+	my $filename = 'rawdata.sql';
 	open(my $fh, '>:encoding(UTF-8)', $filename) or die "Could not open file '$filename' $!";
 		print $fh "INSERT INTO appIdTable ( appId, productName, discount ) VALUES\n";
 	close $fh;
@@ -82,9 +95,7 @@ sub scrapeDataToFile
 	foreach my $val (0..(@appIDData-1))
 	{
 
-		#print "Appid: $appIDData[$val] ProductName: $productNameData[$val] Discount: $discountData[$val]\n";
-
-		my $filename = 'appidlist.sql';
+		my $filename = 'rawdata.sql';
 		open(my $fh, '>>:encoding(UTF-8)', $filename) or die "Could not open file '$filename' $!";
 			print $fh "($appIDData[$val], \'$productNameData[$val]\',\'$discountData[$val]\'), \n";
 		close $fh;
@@ -93,7 +104,7 @@ sub scrapeDataToFile
 
 print "Making SQL file if it doesn't exist\n";
 
-createSQLFile() unless -e "appidlist.sql";
+createSQLFile() unless -e "rawdata.sql";
 
 print "Done making SQL file if it didn't exist \n";
 
@@ -102,7 +113,7 @@ $| = 1;
 for (my $i=1; $i <= $totalRuns; $i++) {
 	print "Starting run ...\n";
 	scrapeDataToFile($i);
-	sleep(30);
+	sleep(60);
 	print "Finishing run ...\n";
 }
 
