@@ -12,23 +12,7 @@ const express = require('express')
 const app = express()
 
 var pgp = require('pg-promise')(/*options wut?*/)
-//var db = pgp('postgres://nodetest:nodetest@localhost:5432/puppies')
 var db = pgp('postgres://restbot:resty@172.17.0.2:5432/postgres')
-
-/*app.get('/api/getPuppers', function (req, res, next) {
-  db.any('select * from pups')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ALL puppies'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-})*/
 
 app.get('/api/getAllSales', function (req, res, next) {
   db.any('SELECT * FROM appidtable')
@@ -37,7 +21,7 @@ app.get('/api/getAllSales', function (req, res, next) {
         .json({
           status: 'success',
           data: data,
-          message: 'Retrieved ALL puppies'
+          message: 'Retrieved all games list'
         });
     })
     .catch(function (err) {
@@ -51,7 +35,7 @@ app.get('/api/get50OffSales', function (req, res, next) {
         .json({
           status: 'success',
           data: data,
-          message: 'Retrieved ALL puppies'
+          message: 'Retrieved 50% off games list'
         });
     })
     .catch(function (err) {
@@ -65,7 +49,7 @@ app.get('/api/get90OffSales', function (req, res, next) {
         .json({
           status: 'success',
           data: data,
-          message: 'Retrieved ALL puppies'
+          message: 'Retrieved 90% off games list'
         });
     })
     .catch(function (err) {
@@ -80,7 +64,22 @@ app.get('/api/game/*', function (req, res, next) {
         .json({
           status: 'success',
           data: data,
-          message: 'Retrieved ALL puppies'
+          message: 'Retrieved specific game'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+})
+app.get('/api/percentageoff/*', function (req, res, next) {
+  var id = req.params;
+  db.any('SELECT * FROM appidtable WHERE discount >= '+ id[0])
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved specific game discount'
         });
     })
     .catch(function (err) {
@@ -99,23 +98,7 @@ app.get('/about', function (req, res) {
 })
 
 app.get('/api/getData', function (req, res) {
-  res.send("This is the api test!")
+  res.send("No data for you, you do not know the secret ways!")
 })
-
-//POST
-app.post('/', function (req, res) {
-  res.send('Got a POST request')
-})
-
-//PUT
-app.put('/user', function (req, res) {
-  res.send('Got a PUT request at /user')
-})
-
-//DELETE
-app.delete('/user', function (req, res) {
-  res.send('Got a DELETE request at /user')
-})
-
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'))
