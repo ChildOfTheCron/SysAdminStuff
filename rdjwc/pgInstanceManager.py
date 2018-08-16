@@ -22,5 +22,5 @@ print ("Building new Database Container Image \n")
 call('docker image build --tag pgdbtest ~/dockerPGDB/', shell=True)
 
 print ("Starting new database container. \n")
-call('docker run --name postdbcont -di pgdbtest', shell=True)
+call('docker run --net steamnetwork --ip 172.10.0.3 --name postdbcont -di pgdbtest', shell=True)
 
