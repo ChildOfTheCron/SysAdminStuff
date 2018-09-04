@@ -108,7 +108,7 @@ createSQLFile() unless -e "rawdata.sql";
 
 print "Done making SQL file if it didn't exist \n";
 
-my $totalRuns = 10;
+my $totalRuns = 1;
 $| = 1;
 for (my $i=1; $i <= $totalRuns; $i++) {
 	print "Starting run ...\n";

@@ -12,7 +12,16 @@ const express = require('express')
 const app = express()
 
 var pgp = require('pg-promise')(/*options wut?*/)
-var db = pgp('postgres://restbot:resty@172.17.0.2:5432/postgres')
+var db = pgp('postgres://restbot:resty@172.18.0.3:5432/postgres')
+
+//trying to get over the Same Origin Policy bullshit using cross-origin resource sharing
+app.use(function(req, res, next) {
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Headers","X-Requested-With,content-type");
+	res.setHeader("Access-Control-Allow-Methods", "GET");
+	res.setHeader("Access-Control-Allow-Credentials", true);
+	next();
+});
 
 app.get('/api/getAllSales', function (req, res, next) {
   db.any('SELECT * FROM appidtable')

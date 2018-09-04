@@ -16,11 +16,11 @@ else:
     print("Container not running\n")
 
 print ("Debug: copying new SQL content. \n")
-call('cp appidlist.sql ~/dockerPGDB/appidlist.sql', shell=True)
+call('cp appidlist.sql /root/SysAdminStuff/myDockerFileMods/appidlist.sql', shell=True)
 
 print ("Building new Database Container Image \n")
-call('docker image build --tag pgdbtest ~/dockerPGDB/', shell=True)
+call('docker image build --tag pgdbtest /root/SysAdminStuff/myDockerFileMods/', shell=True)
 
 print ("Starting new database container. \n")
-call('docker run --net steamnetwork --ip 172.10.0.3 --name postdbcont -di pgdbtest', shell=True)
+call('docker run --restart unless-stopped --net steamnetwork --ip 172.18.0.3 --name postdbcont -di pgdbtest', shell=True)
 
