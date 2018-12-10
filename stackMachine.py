@@ -1,5 +1,31 @@
 #!/usr/bin/python
 
+class stackMachineChar ():
+    #TODO: Make this a thing that actually works and does interesting stuff
+    # wanna treat * like a dupe char if found, and take as input something like: 'A B *' returns 'A B B'.
+    # wanna treat + like a concat char if found, like: 'A B C +' returns 'A BC'
+    def __init__(self, val):
+        self.data = val
+
+    def dupe(self, val1, stack):
+        return stack.append(val1)
+    
+    def parse(self):
+        myTmpList = list(self.data)
+        myStack = []
+
+        #try:
+        #    for x in myTmpList:
+        #        if x != ("+" or "-" or "*"):
+        #            myStack.append(x)
+        #        else:
+        #            if x == "+":
+
+class stackMachineWithList ():
+    def __init__(self, val):
+        print("TODO: Brain no more work, need to find food")
+
+
 class stackMachine ():
 
     # Pass in the initial string to parse
